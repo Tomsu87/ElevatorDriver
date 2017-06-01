@@ -104,7 +104,16 @@ void GoUp()
 		GlobalOutputs.out2=1;
 		GlobalOutputs.out4=1;
 		UpdateOutputs();
-		while (GlobalInputs.in5) UpdateInputs();
+		while ((GlobalInputs.in5)&&(GlobalInputs.in1)) 
+		{
+			UpdateInputs();
+			if (!GlobalInputs.in1)
+			{
+				GlobalOutputs.out7=1;
+				GlobalOutputs.out8=1;
+				UpdateOutputs();
+			}
+		}
 		GlobalOutputs.out4=0;
 		GlobalOutputs.out2=0;
 		GlobalOutputs.out8=1;
@@ -112,6 +121,7 @@ void GoUp()
 		delayms(1000);
 		GlobalOutputs.byte=0;
 		UpdateOutputs();
+		delayms(500);
 	}
 }
 
@@ -126,8 +136,16 @@ void GoDn()
 		GlobalOutputs.out3=1;
 		GlobalOutputs.out4=1;
 		UpdateOutputs();
-		while (GlobalInputs.in6) UpdateInputs();
-			
+		while (GlobalInputs.in6) 
+		{
+			UpdateInputs();
+			if (!GlobalInputs.in1) 
+			{
+			GlobalOutputs.out7=1;
+			GlobalOutputs.out8=1;
+			UpdateOutputs();
+			}
+		}
 		GlobalOutputs.out4=0;
 		GlobalOutputs.out3=0;
 		GlobalOutputs.out8=1;
@@ -135,6 +153,7 @@ void GoDn()
 		delayms(1000);
 		GlobalOutputs.byte=0;
 		UpdateOutputs();
+		delayms(500);
 	}
 }
 
@@ -161,6 +180,7 @@ int main(void)
 			delayms(10);
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 			
 		}
 		
@@ -170,6 +190,7 @@ int main(void)
 			delayms(10);
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 			
 		}
 		
@@ -181,6 +202,7 @@ int main(void)
 			delayms(200);
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 		}
 		
 		if ((GlobalInputs.in3)&&(!GlobalInputs.in1)) // w dó³ - nie ma zezw.
@@ -191,6 +213,7 @@ int main(void)
 			delayms(200);
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 		}
 		
 		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(!GlobalInputs.in6))

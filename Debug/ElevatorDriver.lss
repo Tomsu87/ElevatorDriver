@@ -3,31 +3,31 @@ ElevatorDriver.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000328  00000000  00000000  00000074  2**1
+  0 .text         00000380  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000000  00800060  00800060  0000039c  2**0
+  1 .data         00000000  00800060  00800060  000003f4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000002  00800060  00800060  0000039c  2**0
+  2 .bss          00000002  00800060  00800060  000003f4  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  0000039c  2**0
+  3 .comment      00000030  00000000  00000000  000003f4  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000003cc  2**2
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000424  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000048  00000000  00000000  00000408  2**0
+  5 .debug_aranges 00000048  00000000  00000000  00000460  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000008f9  00000000  00000000  00000450  2**0
+  6 .debug_info   0000099f  00000000  00000000  000004a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000005ad  00000000  00000000  00000d49  2**0
+  7 .debug_abbrev 000005b8  00000000  00000000  00000e47  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000004f9  00000000  00000000  000012f6  2**0
+  8 .debug_line   0000055d  00000000  00000000  000013ff  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000084  00000000  00000000  000017f0  2**2
+  9 .debug_frame  00000084  00000000  00000000  0000195c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000003c8  00000000  00000000  00001874  2**0
+ 10 .debug_str    000003c8  00000000  00000000  000019e0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000070  00000000  00000000  00001c3c  2**0
+ 11 .debug_loc    00000070  00000000  00000000  00001da8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000038  00000000  00000000  00001cac  2**0
+ 12 .debug_ranges 00000038  00000000  00000000  00001e18  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -74,8 +74,8 @@ Disassembly of section .text:
   3c:	a2 36       	cpi	r26, 0x62	; 98
   3e:	b2 07       	cpc	r27, r18
   40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
-  42:	ec d0       	rcall	.+472    	; 0x21c <main>
-  44:	6f c1       	rjmp	.+734    	; 0x324 <_exit>
+  42:	0c d1       	rcall	.+536    	; 0x25c <main>
+  44:	9b c1       	rjmp	.+822    	; 0x37c <_exit>
 
 00000046 <__bad_interrupt>:
   46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
@@ -215,368 +215,440 @@ void GoUp()
 	if ((GlobalInputs.in1)&&(GlobalInputs.in5)) {
  10a:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
  10e:	80 ff       	sbrs	r24, 0
- 110:	3f c0       	rjmp	.+126    	; 0x190 <_Z4GoUpv+0x88>
+ 110:	51 c0       	rjmp	.+162    	; 0x1b4 <_Z4GoUpv+0xac>
  112:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
  116:	84 fd       	sbrc	r24, 4
- 118:	1d c0       	rjmp	.+58     	; 0x154 <_Z4GoUpv+0x4c>
+ 118:	1a c0       	rjmp	.+52     	; 0x14e <_Z4GoUpv+0x46>
  11a:	08 95       	ret
+		GlobalOutputs.out2=1;
+		GlobalOutputs.out4=1;
+		UpdateOutputs();
+		while ((GlobalInputs.in5)&&(GlobalInputs.in1)) 
+		{
+			UpdateInputs();
+ 11c:	99 df       	rcall	.-206    	; 0x50 <_Z12UpdateInputsv>
+			if (!GlobalInputs.in1)
+ 11e:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 122:	80 fd       	sbrc	r24, 0
+ 124:	0b c0       	rjmp	.+22     	; 0x13c <_Z4GoUpv+0x34>
+			{
+				GlobalOutputs.out7=1;
+ 126:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 12a:	80 64       	ori	r24, 0x40	; 64
+ 12c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+				GlobalOutputs.out8=1;
+ 130:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 134:	80 68       	ori	r24, 0x80	; 128
+ 136:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+				UpdateOutputs();
+ 13a:	86 df       	rcall	.-244    	; 0x48 <_Z13UpdateOutputsv>
 		delayms(100);
 		GlobalOutputs.out5=1;
 		GlobalOutputs.out2=1;
 		GlobalOutputs.out4=1;
 		UpdateOutputs();
-		while (GlobalInputs.in5) UpdateInputs();
- 11c:	99 df       	rcall	.-206    	; 0x50 <_Z12UpdateInputsv>
- 11e:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 122:	84 fd       	sbrc	r24, 4
- 124:	fb cf       	rjmp	.-10     	; 0x11c <_Z4GoUpv+0x14>
-		GlobalOutputs.out4=0;
- 126:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 12a:	87 7f       	andi	r24, 0xF7	; 247
- 12c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
-		GlobalOutputs.out2=0;
- 130:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 134:	8d 7f       	andi	r24, 0xFD	; 253
- 136:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
-		GlobalOutputs.out8=1;
- 13a:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 13e:	80 68       	ori	r24, 0x80	; 128
- 140:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
-		UpdateOutputs();
- 144:	81 df       	rcall	.-254    	; 0x48 <_Z13UpdateOutputsv>
-		delayms(1000);
- 146:	88 ee       	ldi	r24, 0xE8	; 232
- 148:	93 e0       	ldi	r25, 0x03	; 3
- 14a:	bd df       	rcall	.-134    	; 0xc6 <_Z7delaymsj>
-		GlobalOutputs.byte=0;
- 14c:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
-		UpdateOutputs();
- 150:	7b df       	rcall	.-266    	; 0x48 <_Z13UpdateOutputsv>
- 152:	08 95       	ret
+		while ((GlobalInputs.in5)&&(GlobalInputs.in1)) 
+ 13c:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 140:	84 ff       	sbrs	r24, 4
+ 142:	1f c0       	rjmp	.+62     	; 0x182 <_Z4GoUpv+0x7a>
+ 144:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 148:	80 fd       	sbrc	r24, 0
+ 14a:	e8 cf       	rjmp	.-48     	; 0x11c <_Z4GoUpv+0x14>
+ 14c:	1a c0       	rjmp	.+52     	; 0x182 <_Z4GoUpv+0x7a>
 
 void GoUp()
 {
 	UpdateInputs();
 	if ((GlobalInputs.in1)&&(GlobalInputs.in5)) {
 		GlobalOutputs.out1=1;
- 154:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 158:	81 60       	ori	r24, 0x01	; 1
- 15a:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 14e:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 152:	81 60       	ori	r24, 0x01	; 1
+ 154:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 15e:	74 df       	rcall	.-280    	; 0x48 <_Z13UpdateOutputsv>
+ 158:	77 df       	rcall	.-274    	; 0x48 <_Z13UpdateOutputsv>
 		delayms(100);
- 160:	84 e6       	ldi	r24, 0x64	; 100
- 162:	90 e0       	ldi	r25, 0x00	; 0
- 164:	b0 df       	rcall	.-160    	; 0xc6 <_Z7delaymsj>
+ 15a:	84 e6       	ldi	r24, 0x64	; 100
+ 15c:	90 e0       	ldi	r25, 0x00	; 0
+ 15e:	b3 df       	rcall	.-154    	; 0xc6 <_Z7delaymsj>
 		GlobalOutputs.out5=1;
- 166:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 16a:	80 61       	ori	r24, 0x10	; 16
- 16c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 160:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 164:	80 61       	ori	r24, 0x10	; 16
+ 166:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out2=1;
- 170:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 174:	82 60       	ori	r24, 0x02	; 2
- 176:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 16a:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 16e:	82 60       	ori	r24, 0x02	; 2
+ 170:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out4=1;
- 17a:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 17e:	88 60       	ori	r24, 0x08	; 8
- 180:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 174:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 178:	88 60       	ori	r24, 0x08	; 8
+ 17a:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 184:	61 df       	rcall	.-318    	; 0x48 <_Z13UpdateOutputsv>
-		while (GlobalInputs.in5) UpdateInputs();
- 186:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 18a:	84 fd       	sbrc	r24, 4
- 18c:	c7 cf       	rjmp	.-114    	; 0x11c <_Z4GoUpv+0x14>
- 18e:	cb cf       	rjmp	.-106    	; 0x126 <_Z4GoUpv+0x1e>
- 190:	08 95       	ret
+ 17e:	64 df       	rcall	.-312    	; 0x48 <_Z13UpdateOutputsv>
+		while ((GlobalInputs.in5)&&(GlobalInputs.in1)) 
+ 180:	dd cf       	rjmp	.-70     	; 0x13c <_Z4GoUpv+0x34>
+				GlobalOutputs.out7=1;
+				GlobalOutputs.out8=1;
+				UpdateOutputs();
+			}
+		}
+		GlobalOutputs.out4=0;
+ 182:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 186:	87 7f       	andi	r24, 0xF7	; 247
+ 188:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+		GlobalOutputs.out2=0;
+ 18c:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 190:	8d 7f       	andi	r24, 0xFD	; 253
+ 192:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+		GlobalOutputs.out8=1;
+ 196:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 19a:	80 68       	ori	r24, 0x80	; 128
+ 19c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+		UpdateOutputs();
+ 1a0:	53 df       	rcall	.-346    	; 0x48 <_Z13UpdateOutputsv>
+		delayms(1000);
+ 1a2:	88 ee       	ldi	r24, 0xE8	; 232
+ 1a4:	93 e0       	ldi	r25, 0x03	; 3
+ 1a6:	8f df       	rcall	.-226    	; 0xc6 <_Z7delaymsj>
+		GlobalOutputs.byte=0;
+ 1a8:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+		UpdateOutputs();
+ 1ac:	4d df       	rcall	.-358    	; 0x48 <_Z13UpdateOutputsv>
+		delayms(500);
+ 1ae:	84 ef       	ldi	r24, 0xF4	; 244
+ 1b0:	91 e0       	ldi	r25, 0x01	; 1
+ 1b2:	89 df       	rcall	.-238    	; 0xc6 <_Z7delaymsj>
+ 1b4:	08 95       	ret
 
-00000192 <_Z4GoDnv>:
+000001b6 <_Z4GoDnv>:
 	}
 }
 
 void GoDn()
 {
 	UpdateInputs();
- 192:	5e df       	rcall	.-324    	; 0x50 <_Z12UpdateInputsv>
+ 1b6:	4c df       	rcall	.-360    	; 0x50 <_Z12UpdateInputsv>
 	if ((GlobalInputs.in1)&&(GlobalInputs.in6)) {
- 194:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 198:	80 ff       	sbrs	r24, 0
- 19a:	3f c0       	rjmp	.+126    	; 0x21a <_Z4GoDnv+0x88>
- 19c:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 1a0:	85 fd       	sbrc	r24, 5
- 1a2:	1d c0       	rjmp	.+58     	; 0x1de <_Z4GoDnv+0x4c>
- 1a4:	08 95       	ret
+ 1b8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 1bc:	80 ff       	sbrs	r24, 0
+ 1be:	4d c0       	rjmp	.+154    	; 0x25a <_Z4GoDnv+0xa4>
+ 1c0:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 1c4:	85 fd       	sbrc	r24, 5
+ 1c6:	2f c0       	rjmp	.+94     	; 0x226 <_Z4GoDnv+0x70>
+ 1c8:	08 95       	ret
+		GlobalOutputs.out3=1;
+		GlobalOutputs.out4=1;
+		UpdateOutputs();
+		while (GlobalInputs.in6) 
+		{
+			UpdateInputs();
+ 1ca:	42 df       	rcall	.-380    	; 0x50 <_Z12UpdateInputsv>
+			if (!GlobalInputs.in1) 
+ 1cc:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 1d0:	80 fd       	sbrc	r24, 0
+ 1d2:	0b c0       	rjmp	.+22     	; 0x1ea <_Z4GoDnv+0x34>
+			{
+			GlobalOutputs.out7=1;
+ 1d4:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 1d8:	80 64       	ori	r24, 0x40	; 64
+ 1da:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+			GlobalOutputs.out8=1;
+ 1de:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 1e2:	80 68       	ori	r24, 0x80	; 128
+ 1e4:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+			UpdateOutputs();
+ 1e8:	2f df       	rcall	.-418    	; 0x48 <_Z13UpdateOutputsv>
 		delayms(100);
 		GlobalOutputs.out6=1;
 		GlobalOutputs.out3=1;
 		GlobalOutputs.out4=1;
 		UpdateOutputs();
-		while (GlobalInputs.in6) UpdateInputs();
- 1a6:	54 df       	rcall	.-344    	; 0x50 <_Z12UpdateInputsv>
- 1a8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 1ac:	85 fd       	sbrc	r24, 5
- 1ae:	fb cf       	rjmp	.-10     	; 0x1a6 <_Z4GoDnv+0x14>
-			
+		while (GlobalInputs.in6) 
+ 1ea:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 1ee:	85 fd       	sbrc	r24, 5
+ 1f0:	ec cf       	rjmp	.-40     	; 0x1ca <_Z4GoDnv+0x14>
+			GlobalOutputs.out7=1;
+			GlobalOutputs.out8=1;
+			UpdateOutputs();
+			}
+		}
 		GlobalOutputs.out4=0;
- 1b0:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1b4:	87 7f       	andi	r24, 0xF7	; 247
- 1b6:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 1f2:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 1f6:	87 7f       	andi	r24, 0xF7	; 247
+ 1f8:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out3=0;
- 1ba:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1be:	8b 7f       	andi	r24, 0xFB	; 251
- 1c0:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 1fc:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 200:	8b 7f       	andi	r24, 0xFB	; 251
+ 202:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out8=1;
- 1c4:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1c8:	80 68       	ori	r24, 0x80	; 128
- 1ca:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 206:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 20a:	80 68       	ori	r24, 0x80	; 128
+ 20c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 1ce:	3c df       	rcall	.-392    	; 0x48 <_Z13UpdateOutputsv>
+ 210:	1b df       	rcall	.-458    	; 0x48 <_Z13UpdateOutputsv>
 		delayms(1000);
- 1d0:	88 ee       	ldi	r24, 0xE8	; 232
- 1d2:	93 e0       	ldi	r25, 0x03	; 3
- 1d4:	78 df       	rcall	.-272    	; 0xc6 <_Z7delaymsj>
+ 212:	88 ee       	ldi	r24, 0xE8	; 232
+ 214:	93 e0       	ldi	r25, 0x03	; 3
+ 216:	57 df       	rcall	.-338    	; 0xc6 <_Z7delaymsj>
 		GlobalOutputs.byte=0;
- 1d6:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 218:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 1da:	36 df       	rcall	.-404    	; 0x48 <_Z13UpdateOutputsv>
- 1dc:	08 95       	ret
+ 21c:	15 df       	rcall	.-470    	; 0x48 <_Z13UpdateOutputsv>
+		delayms(500);
+ 21e:	84 ef       	ldi	r24, 0xF4	; 244
+ 220:	91 e0       	ldi	r25, 0x01	; 1
+ 222:	51 df       	rcall	.-350    	; 0xc6 <_Z7delaymsj>
+ 224:	08 95       	ret
 
 void GoDn()
 {
 	UpdateInputs();
 	if ((GlobalInputs.in1)&&(GlobalInputs.in6)) {
 		GlobalOutputs.out1=1;
- 1de:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1e2:	81 60       	ori	r24, 0x01	; 1
- 1e4:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 226:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 22a:	81 60       	ori	r24, 0x01	; 1
+ 22c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 1e8:	2f df       	rcall	.-418    	; 0x48 <_Z13UpdateOutputsv>
+ 230:	0b df       	rcall	.-490    	; 0x48 <_Z13UpdateOutputsv>
 		delayms(100);
- 1ea:	84 e6       	ldi	r24, 0x64	; 100
- 1ec:	90 e0       	ldi	r25, 0x00	; 0
- 1ee:	6b df       	rcall	.-298    	; 0xc6 <_Z7delaymsj>
+ 232:	84 e6       	ldi	r24, 0x64	; 100
+ 234:	90 e0       	ldi	r25, 0x00	; 0
+ 236:	47 df       	rcall	.-370    	; 0xc6 <_Z7delaymsj>
 		GlobalOutputs.out6=1;
- 1f0:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1f4:	80 62       	ori	r24, 0x20	; 32
- 1f6:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 238:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 23c:	80 62       	ori	r24, 0x20	; 32
+ 23e:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out3=1;
- 1fa:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 1fe:	84 60       	ori	r24, 0x04	; 4
- 200:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 242:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 246:	84 60       	ori	r24, 0x04	; 4
+ 248:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		GlobalOutputs.out4=1;
- 204:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 208:	88 60       	ori	r24, 0x08	; 8
- 20a:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 24c:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 250:	88 60       	ori	r24, 0x08	; 8
+ 252:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 		UpdateOutputs();
- 20e:	1c df       	rcall	.-456    	; 0x48 <_Z13UpdateOutputsv>
-		while (GlobalInputs.in6) UpdateInputs();
- 210:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 214:	85 fd       	sbrc	r24, 5
- 216:	c7 cf       	rjmp	.-114    	; 0x1a6 <_Z4GoDnv+0x14>
- 218:	cb cf       	rjmp	.-106    	; 0x1b0 <_Z4GoDnv+0x1e>
- 21a:	08 95       	ret
+ 256:	f8 de       	rcall	.-528    	; 0x48 <_Z13UpdateOutputsv>
+		while (GlobalInputs.in6) 
+ 258:	c8 cf       	rjmp	.-112    	; 0x1ea <_Z4GoDnv+0x34>
+ 25a:	08 95       	ret
 
-0000021c <main>:
+0000025c <main>:
 }
 
 int main(void)
 {
     /* Replace with your application code */
 	DDRD=0xFF;
- 21c:	8f ef       	ldi	r24, 0xFF	; 255
- 21e:	81 bb       	out	0x11, r24	; 17
+ 25c:	8f ef       	ldi	r24, 0xFF	; 255
+ 25e:	81 bb       	out	0x11, r24	; 17
 	DDRB=0x00;
- 220:	17 ba       	out	0x17, r1	; 23
+ 260:	17 ba       	out	0x17, r1	; 23
 	DDRC=0x00;
- 222:	14 ba       	out	0x14, r1	; 20
+ 262:	14 ba       	out	0x14, r1	; 20
 	PORTD=0x00;
- 224:	12 ba       	out	0x12, r1	; 18
+ 264:	12 ba       	out	0x12, r1	; 18
 	PORTB=0x00;
- 226:	18 ba       	out	0x18, r1	; 24
+ 266:	18 ba       	out	0x18, r1	; 24
 	PORTC=0x00;
- 228:	15 ba       	out	0x15, r1	; 21
+ 268:	15 ba       	out	0x15, r1	; 21
 	
 	GlobalOutputs.byte = 0;
- 22a:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 26a:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 	
 	
     while (1) 
     {
 		UpdateInputs();
- 22e:	10 df       	rcall	.-480    	; 0x50 <_Z12UpdateInputsv>
+ 26e:	f0 de       	rcall	.-544    	; 0x50 <_Z12UpdateInputsv>
 		
 		if ((GlobalInputs.in2)&&(!GlobalInputs.in5)) {  // w góre - winda na górze
- 230:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 234:	81 ff       	sbrs	r24, 1
- 236:	04 c0       	rjmp	.+8      	; 0x240 <main+0x24>
- 238:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 23c:	84 ff       	sbrs	r24, 4
- 23e:	32 c0       	rjmp	.+100    	; 0x2a4 <main+0x88>
-			GlobalOutputs.byte=0;
+ 270:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 274:	81 ff       	sbrs	r24, 1
+ 276:	04 c0       	rjmp	.+8      	; 0x280 <main+0x24>
+ 278:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 27c:	84 ff       	sbrs	r24, 4
+ 27e:	32 c0       	rjmp	.+100    	; 0x2e4 <main+0x88>
 			UpdateOutputs();
+			delayms(100);
 			
 		}
 		
 		if ((GlobalInputs.in3)&&(!GlobalInputs.in6)) {  // w dó³ - winda na dole
- 240:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 244:	82 ff       	sbrs	r24, 2
- 246:	04 c0       	rjmp	.+8      	; 0x250 <main+0x34>
- 248:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 24c:	85 ff       	sbrs	r24, 5
- 24e:	37 c0       	rjmp	.+110    	; 0x2be <main+0xa2>
-			GlobalOutputs.byte=0;
+ 280:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 284:	82 ff       	sbrs	r24, 2
+ 286:	04 c0       	rjmp	.+8      	; 0x290 <main+0x34>
+ 288:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 28c:	85 ff       	sbrs	r24, 5
+ 28e:	3a c0       	rjmp	.+116    	; 0x304 <main+0xa8>
 			UpdateOutputs();
+			delayms(100);
 			
 		}
 		
 		if ((GlobalInputs.in2)&&(!GlobalInputs.in1)) // w góre - nie ma zezw.
- 250:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 254:	81 ff       	sbrs	r24, 1
- 256:	04 c0       	rjmp	.+8      	; 0x260 <main+0x44>
- 258:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 25c:	80 ff       	sbrs	r24, 0
- 25e:	3c c0       	rjmp	.+120    	; 0x2d8 <main+0xbc>
-			delayms(200);
+ 290:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 294:	81 ff       	sbrs	r24, 1
+ 296:	04 c0       	rjmp	.+8      	; 0x2a0 <main+0x44>
+ 298:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 29c:	80 ff       	sbrs	r24, 0
+ 29e:	42 c0       	rjmp	.+132    	; 0x324 <main+0xc8>
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 		}
 		
 		if ((GlobalInputs.in3)&&(!GlobalInputs.in1)) // w dó³ - nie ma zezw.
- 260:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 264:	82 ff       	sbrs	r24, 2
- 266:	04 c0       	rjmp	.+8      	; 0x270 <main+0x54>
- 268:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 26c:	80 ff       	sbrs	r24, 0
- 26e:	46 c0       	rjmp	.+140    	; 0x2fc <main+0xe0>
-			delayms(200);
+ 2a0:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2a4:	82 ff       	sbrs	r24, 2
+ 2a6:	04 c0       	rjmp	.+8      	; 0x2b0 <main+0x54>
+ 2a8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2ac:	80 ff       	sbrs	r24, 0
+ 2ae:	4f c0       	rjmp	.+158    	; 0x34e <main+0xf2>
 			GlobalOutputs.byte=0;
 			UpdateOutputs();
+			delayms(100);
 		}
 		
 		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(!GlobalInputs.in6))
- 270:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 274:	80 ff       	sbrs	r24, 0
- 276:	08 c0       	rjmp	.+16     	; 0x288 <main+0x6c>
- 278:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 27c:	81 ff       	sbrs	r24, 1
- 27e:	04 c0       	rjmp	.+8      	; 0x288 <main+0x6c>
- 280:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 284:	85 ff       	sbrs	r24, 5
- 286:	4c c0       	rjmp	.+152    	; 0x320 <main+0x104>
+ 2b0:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2b4:	80 ff       	sbrs	r24, 0
+ 2b6:	08 c0       	rjmp	.+16     	; 0x2c8 <main+0x6c>
+ 2b8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2bc:	81 ff       	sbrs	r24, 1
+ 2be:	04 c0       	rjmp	.+8      	; 0x2c8 <main+0x6c>
+ 2c0:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2c4:	85 ff       	sbrs	r24, 5
+ 2c6:	58 c0       	rjmp	.+176    	; 0x378 <main+0x11c>
 		{
 			GoUp();
 			
 		}
 		
 		if ((GlobalInputs.in1)&&(GlobalInputs.in3)&&(!GlobalInputs.in5))
- 288:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 28c:	80 ff       	sbrs	r24, 0
- 28e:	cf cf       	rjmp	.-98     	; 0x22e <main+0x12>
- 290:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 294:	82 ff       	sbrs	r24, 2
- 296:	cb cf       	rjmp	.-106    	; 0x22e <main+0x12>
- 298:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
- 29c:	84 fd       	sbrc	r24, 4
- 29e:	c7 cf       	rjmp	.-114    	; 0x22e <main+0x12>
+ 2c8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2cc:	80 ff       	sbrs	r24, 0
+ 2ce:	cf cf       	rjmp	.-98     	; 0x26e <main+0x12>
+ 2d0:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2d4:	82 ff       	sbrs	r24, 2
+ 2d6:	cb cf       	rjmp	.-106    	; 0x26e <main+0x12>
+ 2d8:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <_edata>
+ 2dc:	84 fd       	sbrc	r24, 4
+ 2de:	c7 cf       	rjmp	.-114    	; 0x26e <main+0x12>
 		{
 			GoDn();
- 2a0:	78 df       	rcall	.-272    	; 0x192 <_Z4GoDnv>
- 2a2:	c5 cf       	rjmp	.-118    	; 0x22e <main+0x12>
+ 2e0:	6a df       	rcall	.-300    	; 0x1b6 <_Z4GoDnv>
+ 2e2:	c5 cf       	rjmp	.-118    	; 0x26e <main+0x12>
     while (1) 
     {
 		UpdateInputs();
 		
 		if ((GlobalInputs.in2)&&(!GlobalInputs.in5)) {  // w góre - winda na górze
 			GlobalOutputs.out7=1;
- 2a4:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 2a8:	80 64       	ori	r24, 0x40	; 64
- 2aa:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 2e4:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 2e8:	80 64       	ori	r24, 0x40	; 64
+ 2ea:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2ae:	cc de       	rcall	.-616    	; 0x48 <_Z13UpdateOutputsv>
+ 2ee:	ac de       	rcall	.-680    	; 0x48 <_Z13UpdateOutputsv>
 			delayms(10);
- 2b0:	8a e0       	ldi	r24, 0x0A	; 10
- 2b2:	90 e0       	ldi	r25, 0x00	; 0
- 2b4:	08 df       	rcall	.-496    	; 0xc6 <_Z7delaymsj>
+ 2f0:	8a e0       	ldi	r24, 0x0A	; 10
+ 2f2:	90 e0       	ldi	r25, 0x00	; 0
+ 2f4:	e8 de       	rcall	.-560    	; 0xc6 <_Z7delaymsj>
 			GlobalOutputs.byte=0;
- 2b6:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 2f6:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2ba:	c6 de       	rcall	.-628    	; 0x48 <_Z13UpdateOutputsv>
- 2bc:	c1 cf       	rjmp	.-126    	; 0x240 <main+0x24>
+ 2fa:	a6 de       	rcall	.-692    	; 0x48 <_Z13UpdateOutputsv>
+			delayms(100);
+ 2fc:	84 e6       	ldi	r24, 0x64	; 100
+ 2fe:	90 e0       	ldi	r25, 0x00	; 0
+ 300:	e2 de       	rcall	.-572    	; 0xc6 <_Z7delaymsj>
+ 302:	be cf       	rjmp	.-132    	; 0x280 <main+0x24>
 			
 		}
 		
 		if ((GlobalInputs.in3)&&(!GlobalInputs.in6)) {  // w dó³ - winda na dole
 			GlobalOutputs.out8=1;
- 2be:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 2c2:	80 68       	ori	r24, 0x80	; 128
- 2c4:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 304:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 308:	80 68       	ori	r24, 0x80	; 128
+ 30a:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2c8:	bf de       	rcall	.-642    	; 0x48 <_Z13UpdateOutputsv>
+ 30e:	9c de       	rcall	.-712    	; 0x48 <_Z13UpdateOutputsv>
 			delayms(10);
- 2ca:	8a e0       	ldi	r24, 0x0A	; 10
- 2cc:	90 e0       	ldi	r25, 0x00	; 0
- 2ce:	fb de       	rcall	.-522    	; 0xc6 <_Z7delaymsj>
+ 310:	8a e0       	ldi	r24, 0x0A	; 10
+ 312:	90 e0       	ldi	r25, 0x00	; 0
+ 314:	d8 de       	rcall	.-592    	; 0xc6 <_Z7delaymsj>
 			GlobalOutputs.byte=0;
- 2d0:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 316:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2d4:	b9 de       	rcall	.-654    	; 0x48 <_Z13UpdateOutputsv>
- 2d6:	bc cf       	rjmp	.-136    	; 0x250 <main+0x34>
+ 31a:	96 de       	rcall	.-724    	; 0x48 <_Z13UpdateOutputsv>
+			delayms(100);
+ 31c:	84 e6       	ldi	r24, 0x64	; 100
+ 31e:	90 e0       	ldi	r25, 0x00	; 0
+ 320:	d2 de       	rcall	.-604    	; 0xc6 <_Z7delaymsj>
+ 322:	b6 cf       	rjmp	.-148    	; 0x290 <main+0x34>
 			
 		}
 		
 		if ((GlobalInputs.in2)&&(!GlobalInputs.in1)) // w góre - nie ma zezw.
 		{
 			GlobalOutputs.out7=1;
- 2d8:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 2dc:	80 64       	ori	r24, 0x40	; 64
- 2de:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 324:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 328:	80 64       	ori	r24, 0x40	; 64
+ 32a:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			GlobalOutputs.out6=1;
- 2e2:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 2e6:	80 62       	ori	r24, 0x20	; 32
- 2e8:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 32e:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 332:	80 62       	ori	r24, 0x20	; 32
+ 334:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2ec:	ad de       	rcall	.-678    	; 0x48 <_Z13UpdateOutputsv>
+ 338:	87 de       	rcall	.-754    	; 0x48 <_Z13UpdateOutputsv>
 			delayms(200);
- 2ee:	88 ec       	ldi	r24, 0xC8	; 200
- 2f0:	90 e0       	ldi	r25, 0x00	; 0
- 2f2:	e9 de       	rcall	.-558    	; 0xc6 <_Z7delaymsj>
+ 33a:	88 ec       	ldi	r24, 0xC8	; 200
+ 33c:	90 e0       	ldi	r25, 0x00	; 0
+ 33e:	c3 de       	rcall	.-634    	; 0xc6 <_Z7delaymsj>
 			GlobalOutputs.byte=0;
- 2f4:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 340:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 2f8:	a7 de       	rcall	.-690    	; 0x48 <_Z13UpdateOutputsv>
- 2fa:	b2 cf       	rjmp	.-156    	; 0x260 <main+0x44>
+ 344:	81 de       	rcall	.-766    	; 0x48 <_Z13UpdateOutputsv>
+			delayms(100);
+ 346:	84 e6       	ldi	r24, 0x64	; 100
+ 348:	90 e0       	ldi	r25, 0x00	; 0
+ 34a:	bd de       	rcall	.-646    	; 0xc6 <_Z7delaymsj>
+ 34c:	a9 cf       	rjmp	.-174    	; 0x2a0 <main+0x44>
 		}
 		
 		if ((GlobalInputs.in3)&&(!GlobalInputs.in1)) // w dó³ - nie ma zezw.
 		{
 			GlobalOutputs.out7=1;
- 2fc:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 300:	80 64       	ori	r24, 0x40	; 64
- 302:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 34e:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 352:	80 64       	ori	r24, 0x40	; 64
+ 354:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			GlobalOutputs.out5=1;
- 306:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
- 30a:	80 61       	ori	r24, 0x10	; 16
- 30c:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
+ 358:	80 91 61 00 	lds	r24, 0x0061	; 0x800061 <GlobalOutputs>
+ 35c:	80 61       	ori	r24, 0x10	; 16
+ 35e:	80 93 61 00 	sts	0x0061, r24	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 310:	9b de       	rcall	.-714    	; 0x48 <_Z13UpdateOutputsv>
+ 362:	72 de       	rcall	.-796    	; 0x48 <_Z13UpdateOutputsv>
 			delayms(200);
- 312:	88 ec       	ldi	r24, 0xC8	; 200
- 314:	90 e0       	ldi	r25, 0x00	; 0
- 316:	d7 de       	rcall	.-594    	; 0xc6 <_Z7delaymsj>
+ 364:	88 ec       	ldi	r24, 0xC8	; 200
+ 366:	90 e0       	ldi	r25, 0x00	; 0
+ 368:	ae de       	rcall	.-676    	; 0xc6 <_Z7delaymsj>
 			GlobalOutputs.byte=0;
- 318:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
+ 36a:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <GlobalOutputs>
 			UpdateOutputs();
- 31c:	95 de       	rcall	.-726    	; 0x48 <_Z13UpdateOutputsv>
- 31e:	a8 cf       	rjmp	.-176    	; 0x270 <main+0x54>
+ 36e:	6c de       	rcall	.-808    	; 0x48 <_Z13UpdateOutputsv>
+			delayms(100);
+ 370:	84 e6       	ldi	r24, 0x64	; 100
+ 372:	90 e0       	ldi	r25, 0x00	; 0
+ 374:	a8 de       	rcall	.-688    	; 0xc6 <_Z7delaymsj>
+ 376:	9c cf       	rjmp	.-200    	; 0x2b0 <main+0x54>
 		}
 		
 		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(!GlobalInputs.in6))
 		{
 			GoUp();
- 320:	f3 de       	rcall	.-538    	; 0x108 <_Z4GoUpv>
- 322:	b2 cf       	rjmp	.-156    	; 0x288 <main+0x6c>
+ 378:	c7 de       	rcall	.-626    	; 0x108 <_Z4GoUpv>
+ 37a:	a6 cf       	rjmp	.-180    	; 0x2c8 <main+0x6c>
 
-00000324 <_exit>:
- 324:	f8 94       	cli
+0000037c <_exit>:
+ 37c:	f8 94       	cli
 
-00000326 <__stop_program>:
- 326:	ff cf       	rjmp	.-2      	; 0x326 <__stop_program>
+0000037e <__stop_program>:
+ 37e:	ff cf       	rjmp	.-2      	; 0x37e <__stop_program>
