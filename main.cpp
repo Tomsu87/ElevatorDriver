@@ -8,7 +8,7 @@
  *	PD0..PD7 output relays (output high = relay on)
  *	PC0..PC5 inputs (input high 5..24V)
  *	PB1..PB2 inputs (input high 5..24V)
- *	NO tOSC !! internal clock only!
+ *	NO tOSC !! internal clock only! (1MHz)
  *
  *
  */ 
@@ -111,8 +111,9 @@ void GoUp()
 			{
 				GlobalOutputs.out7=1;
 				GlobalOutputs.out8=1;
+				GlobalOutputs.out4=0;
 				UpdateOutputs();
-			}
+			} else GlobalOutputs.out4=1;
 		}
 		GlobalOutputs.out4=0;
 		GlobalOutputs.out2=0;
@@ -143,8 +144,10 @@ void GoDn()
 			{
 			GlobalOutputs.out7=1;
 			GlobalOutputs.out8=1;
+			GlobalOutputs.out4=0;
 			UpdateOutputs();
-			}
+			} else GlobalOutputs.out4=1;
+			
 		}
 		GlobalOutputs.out4=0;
 		GlobalOutputs.out3=0;
@@ -174,8 +177,21 @@ int main(void)
     {
 		UpdateInputs();
 		
-		if ((GlobalInputs.in2)&&(!GlobalInputs.in5)) {  // w góre - winda na górze
+		if (GlobalInputs.in4)    // przycisk alarm - tr¹bienie na piêtrach.
+		{
+			GlobalOutputs.out5=1;
+			GlobalOutputs.out6=1;
 			GlobalOutputs.out7=1;
+			GlobalOutputs.out8=1;
+			while (GlobalInputs.in4) UpdateInputs();
+			delayms(100);
+			GlobalOutputs.byte=0;
+			delayms(500);
+		}
+		
+		if ((GlobalInputs.in2)&&(!GlobalInputs.in5))  // w góre - winda na górze.
+		{ 
+			GlobalOutputs.out8=1;
 			UpdateOutputs();
 			delayms(10);
 			GlobalOutputs.byte=0;
@@ -184,7 +200,8 @@ int main(void)
 			
 		}
 		
-		if ((GlobalInputs.in3)&&(!GlobalInputs.in6)) {  // w dó³ - winda na dole
+		if ((GlobalInputs.in3)&&(!GlobalInputs.in6)) // w dó³ - winda na dole
+		{  
 			GlobalOutputs.out8=1;
 			UpdateOutputs();
 			delayms(10);
