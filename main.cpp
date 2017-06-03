@@ -104,7 +104,7 @@ void GoUp()
 		GlobalOutputs.out2=1;
 		GlobalOutputs.out4=1;
 		UpdateOutputs();
-		while ((GlobalInputs.in5)&&(GlobalInputs.in1)) 
+		while (GlobalInputs.in5) 
 		{
 			UpdateInputs();
 			if (!GlobalInputs.in1)
@@ -119,10 +119,10 @@ void GoUp()
 		GlobalOutputs.out2=0;
 		GlobalOutputs.out8=1;
 		UpdateOutputs();
-		delayms(1000);
+		delayms(500);
 		GlobalOutputs.byte=0;
 		UpdateOutputs();
-		delayms(500);
+		delayms(100);
 	}
 }
 
@@ -153,10 +153,10 @@ void GoDn()
 		GlobalOutputs.out3=0;
 		GlobalOutputs.out8=1;
 		UpdateOutputs();
-		delayms(1000);
+		delayms(500);
 		GlobalOutputs.byte=0;
 		UpdateOutputs();
-		delayms(500);
+		delayms(100);
 	}
 }
 
@@ -177,17 +177,22 @@ int main(void)
     {
 		UpdateInputs();
 		
+/*				Wy³¹czone do czasu poprawek uk³adu.
 		if (GlobalInputs.in4)    // przycisk alarm - tr¹bienie na piêtrach.
 		{
 			GlobalOutputs.out5=1;
 			GlobalOutputs.out6=1;
 			GlobalOutputs.out7=1;
 			GlobalOutputs.out8=1;
+			UpdateOutputs();
 			while (GlobalInputs.in4) UpdateInputs();
 			delayms(100);
 			GlobalOutputs.byte=0;
+			UpdateOutputs();
 			delayms(500);
 		}
+	
+*/	
 		
 		if ((GlobalInputs.in2)&&(!GlobalInputs.in5))  // w góre - winda na górze.
 		{ 
@@ -244,6 +249,36 @@ int main(void)
 			GoDn();
 			
 		}
-    }
+		
+		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(GlobalInputs.in3)&&(GlobalInputs.in4)) {
+		GlobalOutputs.out1=1;
+		UpdateOutputs();
+		delayms(100);
+		GlobalOutputs.out5=1;
+		GlobalOutputs.out2=1;
+		GlobalOutputs.out4=1;
+		UpdateOutputs();
+		while (GlobalInputs.in5)
+		{
+			UpdateInputs();
+			if (!GlobalInputs.in1)
+			{
+				GlobalOutputs.out7=1;
+				GlobalOutputs.out8=1;
+				GlobalOutputs.out4=0;
+				UpdateOutputs();
+			} else GlobalOutputs.out4=1;
+		}
+		GlobalOutputs.out4=0;
+		GlobalOutputs.out2=0;
+		GlobalOutputs.out8=1;
+		UpdateOutputs();
+		delayms(500);
+		GlobalOutputs.byte=0;
+		UpdateOutputs();
+		delayms(100);
+		}
+	}	
+		
 }
 
