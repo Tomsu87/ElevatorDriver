@@ -16,7 +16,7 @@
 
 #include <avr/io.h>
 
-#define cycles 450  // iloœæ cykli w delay
+#define cycles 250  // iloœæ cykli w delay
 
 #define  OutputPort PORTD
 #define input1 (PINC & (1<<PC0))
@@ -32,14 +32,14 @@
 union outputs {
 	uint8_t byte;
 	struct {
-		uint8_t out1:1;
-		uint8_t out2:1;
-		uint8_t out3:1;
-		uint8_t out4:1;
-		uint8_t out5:1;
-		uint8_t out6:1;
-		uint8_t out7:1;
-		uint8_t out8:1;
+		uint8_t rLocks:1;
+		uint8_t rUp:1;
+		uint8_t rDn:1;
+		uint8_t rAllow:1;
+		uint8_t lightUp:1;
+		uint8_t lightDn:1;
+		uint8_t lightAlert:1;
+		uint8_t buzzAlert:1;
 			};
 	};
 	
@@ -48,12 +48,12 @@ volatile outputs GlobalOutputs;
 union inputs {
 	uint8_t byte;
 	struct {
-		uint8_t in1:1;
-		uint8_t in2:1;
-		uint8_t in3:1;
-		uint8_t in4:1;
-		uint8_t in5:1;
-		uint8_t in6:1;
+		uint8_t pOBW:1;
+		uint8_t UpBtn:1;
+		uint8_t DnBtn:1;
+		uint8_t AlBtn:1;
+		uint8_t PosUp:1;
+		uint8_t PosDn:1;
 		uint8_t in7:1;
 		uint8_t in8:1;
 	};
@@ -69,12 +69,12 @@ void UpdateOutputs()
 void UpdateInputs()
 {
 	GlobalInputs.byte=0x00;
-	if input1 GlobalInputs.in1 = 1;
-	if input2 GlobalInputs.in2 = 1;
-	if input3 GlobalInputs.in3 = 1;
-	if input4 GlobalInputs.in4 = 1;
-	if input5 GlobalInputs.in5 = 1;
-	if input6 GlobalInputs.in6 = 1;
+	if input1 GlobalInputs.pOBW = 1;
+	if input2 GlobalInputs.UpBtn = 1;
+	if input3 GlobalInputs.DnBtn = 1;
+	if input4 GlobalInputs.AlBtn = 1;
+	if input5 GlobalInputs.PosUp = 1;
+	if input6 GlobalInputs.PosDn = 1;
 	if input7 GlobalInputs.in7 = 1;
 	if input8 GlobalInputs.in8 = 1;
 	
@@ -96,28 +96,33 @@ void delayms(uint16_t czas)
 void GoUp()
 {
 	UpdateInputs();
-	if ((GlobalInputs.in1)&&(GlobalInputs.in5)) {
-		GlobalOutputs.out1=1;
+	if ((GlobalInputs.pOBW)&&(GlobalInputs.PosUp)) {
+		GlobalOutputs.rLocks=1;
 		UpdateOutputs();
 		delayms(100);
-		GlobalOutputs.out5=1;
-		GlobalOutputs.out2=1;
-		GlobalOutputs.out4=1;
+		GlobalOutputs.lightUp=1;
+		GlobalOutputs.rUp=1;
+		GlobalOutputs.rAllow=1;
 		UpdateOutputs();
-		while (GlobalInputs.in5) 
+		while (GlobalInputs.PosUp) 
 		{
 			UpdateInputs();
-			if (!GlobalInputs.in1)
+			if (!GlobalInputs.pOBW)
 			{
-				GlobalOutputs.out7=1;
-				GlobalOutputs.out8=1;
-				GlobalOutputs.out4=0;
-				UpdateOutputs();
-			} else GlobalOutputs.out4=1;
+				GlobalOutputs.lightAlert=1;
+				GlobalOutputs.buzzAlert=1;
+				GlobalOutputs.rAllow=0;
+			} else {
+			GlobalOutputs.rAllow=1;
+			GlobalOutputs.buzzAlert=0;
+			GlobalOutputs.lightAlert=0;
 		}
-		GlobalOutputs.out4=0;
-		GlobalOutputs.out2=0;
-		GlobalOutputs.out8=1;
+		UpdateOutputs();
+		}
+		GlobalOutputs.rAllow=0;
+		GlobalOutputs.rUp=0;
+		GlobalOutputs.lightAlert=1;
+		GlobalOutputs.buzzAlert=1;
 		UpdateOutputs();
 		delayms(500);
 		GlobalOutputs.byte=0;
@@ -129,29 +134,33 @@ void GoUp()
 void GoDn()
 {
 	UpdateInputs();
-	if ((GlobalInputs.in1)&&(GlobalInputs.in6)) {
-		GlobalOutputs.out1=1;
+	if ((GlobalInputs.pOBW)&&(GlobalInputs.PosDn)) {
+		GlobalOutputs.rLocks=1;
 		UpdateOutputs();
 		delayms(100);
-		GlobalOutputs.out6=1;
-		GlobalOutputs.out3=1;
-		GlobalOutputs.out4=1;
+		GlobalOutputs.lightDn=1;
+		GlobalOutputs.rDn=1;
+		GlobalOutputs.rAllow=1;
 		UpdateOutputs();
-		while (GlobalInputs.in6) 
+		while (GlobalInputs.PosDn) 
 		{
 			UpdateInputs();
-			if (!GlobalInputs.in1) 
+			if (!GlobalInputs.pOBW) 
 			{
-			GlobalOutputs.out7=1;
-			GlobalOutputs.out8=1;
-			GlobalOutputs.out4=0;
+			GlobalOutputs.lightAlert=1;
+			GlobalOutputs.buzzAlert=1;
+			GlobalOutputs.rAllow=0;
+			} else {
+				 GlobalOutputs.rAllow=1;
+				 GlobalOutputs.buzzAlert=0;
+				 GlobalOutputs.lightAlert=0;
+				}
 			UpdateOutputs();
-			} else GlobalOutputs.out4=1;
-			
 		}
-		GlobalOutputs.out4=0;
-		GlobalOutputs.out3=0;
-		GlobalOutputs.out8=1;
+		GlobalOutputs.rAllow=0;
+		GlobalOutputs.rDn=0;
+		GlobalOutputs.lightAlert=1;
+		GlobalOutputs.buzzAlert=1;
 		UpdateOutputs();
 		delayms(500);
 		GlobalOutputs.byte=0;
@@ -194,9 +203,9 @@ int main(void)
 	
 */	
 		
-		if ((GlobalInputs.in2)&&(!GlobalInputs.in5))  // w góre - winda na górze.
+		if ((GlobalInputs.UpBtn)&&(GlobalInputs.PosUp))  // w góre - winda na górze.
 		{ 
-			GlobalOutputs.out8=1;
+			GlobalOutputs.buzzAlert=1;
 			UpdateOutputs();
 			delayms(10);
 			GlobalOutputs.byte=0;
@@ -205,9 +214,9 @@ int main(void)
 			
 		}
 		
-		if ((GlobalInputs.in3)&&(!GlobalInputs.in6)) // w dó³ - winda na dole
+		if ((GlobalInputs.DnBtn)&&(GlobalInputs.PosDn)) // w dó³ - winda na dole
 		{  
-			GlobalOutputs.out8=1;
+			GlobalOutputs.buzzAlert=1;
 			UpdateOutputs();
 			delayms(10);
 			GlobalOutputs.byte=0;
@@ -216,10 +225,10 @@ int main(void)
 			
 		}
 		
-		if ((GlobalInputs.in2)&&(!GlobalInputs.in1)) // w góre - nie ma zezw.
+		if ((GlobalInputs.UpBtn)&&(!GlobalInputs.pOBW)) // w góre - nie ma zezw.
 		{
-			GlobalOutputs.out7=1;
-			GlobalOutputs.out6=1;
+			GlobalOutputs.lightAlert=1;
+			GlobalOutputs.lightDn=1;
 			UpdateOutputs();
 			delayms(200);
 			GlobalOutputs.byte=0;
@@ -227,10 +236,10 @@ int main(void)
 			delayms(100);
 		}
 		
-		if ((GlobalInputs.in3)&&(!GlobalInputs.in1)) // w dó³ - nie ma zezw.
+		if ((GlobalInputs.DnBtn)&&(!GlobalInputs.pOBW)) // w dó³ - nie ma zezw.
 		{
-			GlobalOutputs.out7=1;
-			GlobalOutputs.out5=1;
+			GlobalOutputs.lightAlert=1;
+			GlobalOutputs.lightUp=1;
 			UpdateOutputs();
 			delayms(200);
 			GlobalOutputs.byte=0;
@@ -238,40 +247,54 @@ int main(void)
 			delayms(100);
 		}
 		
-		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(!GlobalInputs.in6))
+		uint8_t counter,test;
+		
+		if ((GlobalInputs.pOBW)&&(GlobalInputs.UpBtn)&&(GlobalInputs.PosDn))
 		{
-			GoUp();
+			test=1;
+			counter=200;
+			while (counter) {
+				UpdateInputs();
+				if (!GlobalInputs.UpBtn) test=0;
+			}
+			if (test) GoUp();
 			
 		}
 		
-		if ((GlobalInputs.in1)&&(GlobalInputs.in3)&&(!GlobalInputs.in5))
+		if ((GlobalInputs.pOBW)&&(GlobalInputs.DnBtn)&&(GlobalInputs.PosUp))
 		{
-			GoDn();
+			test=1;
+			counter=200;
+			while (counter) {
+				UpdateInputs();
+				if (!GlobalInputs.UpBtn) test=0;
+			}
+			if (test) GoDn();
 			
 		}
 		
-		if ((GlobalInputs.in1)&&(GlobalInputs.in2)&&(GlobalInputs.in3)&&(GlobalInputs.in4)) {
-		GlobalOutputs.out1=1;
+		if ((GlobalInputs.pOBW)&&(GlobalInputs.UpBtn)&&(GlobalInputs.DnBtn)&&(GlobalInputs.AlBtn)) {
+		GlobalOutputs.rLocks=1;
 		UpdateOutputs();
 		delayms(100);
-		GlobalOutputs.out5=1;
-		GlobalOutputs.out2=1;
-		GlobalOutputs.out4=1;
+		GlobalOutputs.lightUp=1;
+		GlobalOutputs.rUp=1;
+		GlobalOutputs.rAllow=1;
 		UpdateOutputs();
-		while (GlobalInputs.in5)
+		while (GlobalInputs.PosUp)
 		{
 			UpdateInputs();
-			if (!GlobalInputs.in1)
+			if (!GlobalInputs.pOBW)
 			{
-				GlobalOutputs.out7=1;
-				GlobalOutputs.out8=1;
-				GlobalOutputs.out4=0;
+				GlobalOutputs.lightAlert=1;
+				GlobalOutputs.buzzAlert=1;
+				GlobalOutputs.rAllow=0;
 				UpdateOutputs();
-			} else GlobalOutputs.out4=1;
+			} else GlobalOutputs.rAllow=1;
 		}
-		GlobalOutputs.out4=0;
-		GlobalOutputs.out2=0;
-		GlobalOutputs.out8=1;
+		GlobalOutputs.rAllow=0;
+		GlobalOutputs.rUp=0;
+		GlobalOutputs.buzzAlert=1;
 		UpdateOutputs();
 		delayms(500);
 		GlobalOutputs.byte=0;
